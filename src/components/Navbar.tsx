@@ -83,7 +83,7 @@ const Navbar = () => {
             onClick={(e) => handleSmoothScroll(e, "#contact")}
             className="hidden md:block px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-full text-sm font-medium transition-all hover:scale-105 backdrop-blur-sm border border-primary/20"
           >
-            Contact Us
+            Contact Me
           </a>
           
           {/* Mobile Nav Toggle */}
