@@ -12,6 +12,6 @@ This website showcases:
 
 Explore what I'm working on, what I'm passionate about, and where I'm headed in the world of artificial intelligence and machine learning.
 
-→ Visit my portfolio: [Your Portfolio Link Here]
+→ Visit my portfolio: https://moodlerz-personal-portfolio.vercel.app/
 
 Thanks for stopping by! 😊
