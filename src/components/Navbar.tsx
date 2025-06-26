@@ -118,7 +118,7 @@ const Navbar = () => {
               onClick={(e) => handleSmoothScroll(e, "#contact")}
               className="mt-2 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary rounded-lg text-center font-medium transition-all"
             >
-              Contact Us
+              Contact Me
             </a>
           </div>
         </div>
