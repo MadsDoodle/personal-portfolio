@@ -8,10 +8,13 @@ import {
   Terminal,
   Cpu,
   BarChart3,
+  FolderKanban,
+  Compass,
   X,
   Github,
   ExternalLink
 } from "lucide-react";
+
 
 interface ProjectData {
   id: string;
@@ -139,7 +142,40 @@ const Projects = () => {
       icon: <BarChart3 className="h-5 w-5" />,
       imageUrl: "images/monte-carlo.png",
       githubUrl: "https://github.com/MadsDoodle/Monte-Carlo-simulation"
-    }
+    },
+    {
+      id: "acadia-fms",
+      title: "ACADIA — Academic Workspace (EasyFMS)",
+      description:
+        "A personal-first academic workspace for managing learning materials, projects, tasks, and documents. Built with Vite, React, and TypeScript, ACADIA offers structured learning workflows and an AI copilot for navigating and querying academic content — designed as a beginner-friendly alternative to GitHub for students.",
+      technologies: [
+        "Vite",
+        "React",
+        "TypeScript",
+        "AI Copilot",
+        "Workspace UI"
+      ],
+      icon: <FolderKanban className="h-5 w-5" />,
+      imageUrl: "images/acadia.png",
+      githubUrl: "https://github.com/MadsDoodle/AcadIA-EasyFMS"
+    },
+    {
+      id: "ai-career-navigator",
+      title: "AI Career Navigator",
+      description:
+        "An AI-powered career navigation platform that guides users through their entire career lifecycle — from resume analysis and skill gap detection to learning paths, career simulation, job matching, and application support. Acts as a personalized AI career mentor that adapts to each user's profile.",
+      technologies: [
+        "LLMs",
+        "Career Intelligence",
+        "Skill Gap Analysis",
+        "Recommendation Systems",
+        "AI Agents"
+      ],
+      icon: <Compass className="h-5 w-5" />,
+      imageUrl: "images/career-nav.png",
+      githubUrl: "https://github.com/MadsDoodle/Career-Navigator"
+    },
+
   ];
 
   const startRotation = () => {
