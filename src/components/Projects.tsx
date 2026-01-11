@@ -1,7 +1,25 @@
 
 import { useState, useRef, useEffect } from "react";
+
 import { cn } from "@/lib/utils";
-import { FileCode, Database, Bot, Code2, BarChart3, MessageSquareText, Zap, BookOpen, Users, Github, ExternalLink, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Bot,
+  Database,
+  Layers,
+  Camera,
+  Terminal,
+  Cpu,
+  FileCode,
+  Code2,
+  BarChart3,
+  MessageSquareText,
+  Users,
+  Github,
+  ExternalLink,
+  ChevronLeft,
+  ChevronRight
+} from "lucide-react";
+
 
 interface ProjectData {
   id: string;
@@ -22,59 +40,114 @@ const Projects = () => {
 
   const projects: ProjectData[] = [
     {
-      id: "multimodal-rag",
-      title: "Multimodal RAG System for Semantic PDF QA",
-      description: "Dual-mode retrieval using CLIP + GPT-4o summaries with modular Streamlit frontend for semantic PDF question answering.",
-      technologies: ["Python", "CLIP", "GPT-4o", "Streamlit", "RAG"],
+      id: "multi-agent-research",
+      title: "Multi-Agent Research Automation System",
+      description:
+        "LangGraph + LangChain based multi-agent research system enabling academic search, document retrieval, metadata extraction, literature synthesis, and LaTeX paper generation with persistent conversational state.",
+      technologies: [
+        "LangGraph",
+        "LangChain",
+        "GPT-4",
+        "arXiv API",
+        "Semantic Scholar",
+        "LaTeX"
+      ],
       icon: <Bot className="h-5 w-5" />,
-      imageUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
-      githubUrl: "https://github.com/MadsDoodle/Multimodal_PDF_RAG-using-CLIP-LLM-"
+      imageUrl: "/images/research-agent.png",
+      githubUrl: "https://github.com/MadsDoodle/BACKEND-LangGraph-research-agent.git"
     },
     {
-      id: "sign-language",
-      title: "TFOD - Sign Language Detection",
-      description: "SSD MobileNetV2-based sign detection from webcam using OpenCV, LabelImg, and TFRecord pipeline.",
-      technologies: ["TensorFlow", "OpenCV", "SSD MobileNetV2", "Python"],
-      icon: <Users className="h-5 w-5" />,
-      imageUrl: "https://images.unsplash.com/photo-1559027615-cd4628902d4a?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
-      githubUrl: "https://github.com/MadsDoodle/TFOD-SignLanguage"
+      id: "tabular-rag",
+      title: "Tabular-RAG: Multimodal Retrieval-Augmented Generation",
+      description:
+        "From-scratch multimodal RAG system with PDF parsing, OCR, table/chart understanding, FAISS indexing, and source-grounded GPT-4 responses without orchestration frameworks.",
+      technologies: [
+        "FAISS",
+        "OCR",
+        "PDF Parsing",
+        "GPT-4",
+        "Multimodal RAG"
+      ],
+      icon: <Database className="h-5 w-5" />,
+      imageUrl: "images/TabRAG.png",
+      githubUrl: "https://github.com/MadsDoodle/Tabular-RAG-from-scratch.git"
     },
+    {
+      id: "langgraph-web-synthesis",
+      title: "LangGraph Automated No-Code Web Synthesis System",
+      description:
+        "Planner–Architect–Coder–Reviewer multi-agent pipeline that synthesizes complete web projects from a single prompt using structured specifications and iterative validation loops.",
+      technologies: [
+        "LangGraph",
+        "LLM Agents",
+        "GPT-4",
+        "Code Generation",
+        "Web Automation"
+      ],
+      icon: <Layers className="h-5 w-5" />,
+      imageUrl: "/images/web-synthesis.png",
+      githubUrl: "https://github.com/MadsDoodle/Gen-Sites-No-code-website-builder-using-LangGraph.git"
+    },
+    {
+      id: "vision-pipelines",
+      title: "End-to-End Vision Pipelines",
+      description:
+        "Comprehensive vision systems including image captioning (VGG16 + LSTM), sign language detection with SSD MobileNetV2, and one-shot face recognition using Siamese networks.",
+      technologies: [
+        "Computer Vision",
+        "TensorFlow",
+        "VGG16",
+        "Siamese Networks",
+        "OpenCV"
+      ],
+      icon: <Camera className="h-5 w-5" />,
+      imageUrl: "images/vision.png",
+      githubUrl: "https://github.com/username/vision-pipelines"
+    },
+    {
+      id: "sqlpilot",
+      title: "SQLPilot – AI-powered MySQL Chatbot",
+      description:
+        "Natural language to SQL system enabling conversational querying, auto-generated SQL execution, result explanations, and interactive SQL playground with tabular outputs.",
+      technologies: [
+        "MySQL",
+        "LLMs",
+        "SQL",
+        "NLP",
+        "Python"
+      ],
+      icon: <Terminal className="h-5 w-5" />,
+      imageUrl: "/images/sql-pilot.png",
+      githubUrl: "https://github.com/MadsDoodle/SQLPilot"
+    },
+    {
+      id: "llama-finetuning",
+      title: "Fine-Tuning LLaMA-3.2 with R1-Distill via PEFT",
+      description:
+        "SFT fine-tuning of LLaMA-3.2-3B using LoRA/QLoRA with Unsloth optimizations, preserving reasoning behavior and exporting deployable GGUF checkpoints.",
+      technologies: [
+        "LLaMA",
+        "PEFT",
+        "LoRA",
+        "QLoRA",
+        "Unsloth"
+      ],
+      icon: <Cpu className="h-5 w-5" />,
+      imageUrl: "images/fine-tune.png",
+      githubUrl: "https://github.com/MadsDoodle/LLM-finetuning-Stages.git"
+    },
+
+    
     {
       id: "monte-carlo",
       title: "Monte Carlo Particle Simulation",
       description: "N-body simulation with Lennard-Jones potential and periodic boundary conditions, featuring Matplotlib visualization and interactive UI.",
       technologies: ["Python", "Matplotlib", "NumPy", "Monte Carlo"],
       icon: <BarChart3 className="h-5 w-5" />,
-      imageUrl: "https://images.unsplash.com/photo-1635070041078-e363dbe005cb?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
+      imageUrl: "images/monte-carlo.png",
       githubUrl: "https://github.com/MadsDoodle/Monte-Carlo-simulation"
     },
-    {
-      id: "resume-pro",
-      title: "ResumePro – Resume Builder & Career Assistant",
-      description: "Dual GPT-4o-mini LLMs for resume + career guidance with Voice UI using Whisper + ElevenLabs and auth-backed backend (Supabase).",
-      technologies: ["GPT-4o-mini", "Whisper", "ElevenLabs", "Supabase"],
-      icon: <FileCode className="h-5 w-5" />,
-      imageUrl: "https://images.unsplash.com/photo-1586281380349-632531db7ed4?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
-      githubUrl: "https://github.com/MadsDoodle/ResumePro"
-    },
-    {
-      id: "image-captioning",
-      title: "Image Captioning with VGG16 + LSTM",
-      description: "Image captioning on Flickr8k dataset using VGG16 encoder + LSTM decoder with BLEU evaluation and Streamlit UI.",
-      technologies: ["VGG16", "LSTM", "TensorFlow", "Streamlit"],
-      icon: <Code2 className="h-5 w-5" />,
-      imageUrl: "https://images.unsplash.com/photo-1531297484001-80022131f5a1?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
-      githubUrl: "https://github.com/MadsDoodle/Deep_Learning_Image_Captioning"
-    },
-    {
-      id: "sentiment-analysis",
-      title: "Sentiment Analysis of Reviews",
-      description: "Logistic Regression + Transformer baseline for sentiment analysis processing 500K+ reviews.",
-      technologies: ["Python", "Transformers", "Logistic Regression", "NLP"],
-      icon: <MessageSquareText className="h-5 w-5" />,
-      imageUrl: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1200&q=80",
-      githubUrl: "https://github.com/MadsDoodle/Amazon-SentimentAnalysis"
-    }
+    
   ];
 
   useEffect(() => {
