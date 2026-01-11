@@ -466,7 +466,7 @@ const Skills = () => {
 
         <div className="flex flex-col lg:flex-row gap-8 items-start">
           {/* Left Side - Skill Cards */}
-          <div className="w-full lg:w-[45%] space-y-4 max-h-[700px] overflow-y-auto pr-2 custom-scrollbar">
+          <div className="w-full lg:w-[45%] space-y-4 max-h-[700px] overflow-y-auto pr-2 pl-1 sm:pl-3 lg:pl-5 custom-scrollbar">
             {skillCategories.map((category) => {
               const Icon = category.icon;
               const isActive = activeCategory?.id === category.id;
