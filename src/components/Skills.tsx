@@ -449,10 +449,10 @@ const Skills = () => {
   }, [activeCategory]);
 
   return (
-    <section id="skills" className="min-h-screen bg-[#0B0F1A] relative overflow-hidden py-20">
+    <section id="skills" className="min-h-screen bg-black relative overflow-hidden py-20">
       {/* Background effects */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/30 via-transparent to-blue-900/30" />
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_50%,rgba(139,92,246,0.2),transparent_50%)]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-zinc-900/70 via-black to-black" />
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(24,24,27,0.75),transparent_60%)]" />
       
       <div className="relative z-10 max-w-[1600px] mx-auto px-4">
         <div className="text-center mb-12">
