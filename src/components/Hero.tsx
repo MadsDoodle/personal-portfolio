@@ -10,7 +10,7 @@ const Hero = () => {
     try {
       // Create a temporary link element to trigger download
       const link = document.createElement('a');
-      link.href = "https://drive.google.com/uc?export=download&id=14E9gDjEztnFnp-qP2drPIxOsHaQvku_E";
+      link.href = "https://drive.google.com/uc?export=download&id=1jL9OWLNod1oGebRMWaTyLUfYdWj59vev";
       link.download = "Madhav Resume.pdf";
       link.setAttribute('target', '_blank');
       link.setAttribute('rel', 'noopener noreferrer');

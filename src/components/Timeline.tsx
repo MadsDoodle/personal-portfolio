@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 import { Calendar, Building2, GraduationCap, ChevronRight, Zap, Brain, Beaker, BookOpen } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -35,7 +34,7 @@ const TimelineItem: React.FC<TimelineItemProps> = ({
   };
 
   return (
-    <div className="relative flex items-center w-full mb-8 md:mb-16">
+    <div className="relative flex items-start w-full mb-6 md:mb-3">
       {/* Mobile Layout - Vertical */}
       <div className="md:hidden w-full pl-12">
         {/* Mobile Timeline Node */}
@@ -72,39 +71,39 @@ const TimelineItem: React.FC<TimelineItemProps> = ({
       </div>
 
       {/* Desktop Layout - Horizontal */}
-      <div className="hidden md:flex items-center w-full">
+      <div className="hidden md:flex items-start w-full">
         {/* Timeline Node */}
-        <div className="absolute z-20 w-16 h-16 rounded-full bg-gradient-to-br from-purple-600 to-purple-400 border-4 border-black flex items-center justify-center text-white transition-all duration-500 shadow-[0_0_30px_rgba(139,69,219,0.6)] hover:shadow-[0_0_40px_rgba(139,69,219,0.9)] hover:scale-110 left-1/2 transform -translate-x-1/2">
+        <div className="absolute z-20 w-14 h-14 rounded-full bg-gradient-to-br from-purple-600 to-purple-400 border-4 border-black flex items-center justify-center text-white transition-all duration-500 shadow-[0_0_30px_rgba(139,69,219,0.6)] hover:shadow-[0_0_40px_rgba(139,69,219,0.9)] hover:scale-110 left-1/2 transform -translate-x-1/2 top-2">
           {getIcon()}
         </div>
 
         {/* Card */}
         <div className={cn(
-          "w-5/12 transition-all duration-700 transform",
-          isLeft ? "mr-auto pr-16" : "ml-auto pl-16",
+          "w-[47%] transition-all duration-700 transform",
+          isLeft ? "mr-auto pr-12" : "ml-auto pl-12",
           isVisible 
             ? `translate-x-0 opacity-100 ${isLeft ? 'animate-slide-in-left' : 'animate-slide-in-right'}` 
             : `${isLeft ? '-translate-x-20' : 'translate-x-20'} opacity-0`
         )}>
-          <div className="bg-gray-900/90 backdrop-blur-sm border-2 border-purple-500/30 rounded-xl p-8 hover:border-purple-400/60 hover:shadow-[0_0_30px_rgba(139,69,219,0.4)] hover:scale-105 transition-all duration-300 relative overflow-hidden group">
+          <div className="bg-gray-900/90 backdrop-blur-sm border-2 border-purple-500/30 rounded-xl p-6 hover:border-purple-400/60 hover:shadow-[0_0_30px_rgba(139,69,219,0.4)] hover:scale-105 transition-all duration-300 relative overflow-hidden group">
             <div className={cn(
               "absolute top-0 h-2 bg-gradient-to-r from-purple-600 to-purple-400 transition-all duration-500",
               isLeft ? "left-0 w-0 group-hover:w-full" : "right-0 w-0 group-hover:w-full"
             )} />
             
-            <div className="flex items-center gap-2 text-sm text-purple-300 mb-3">
+            <div className="flex items-center gap-2 text-sm text-purple-300 mb-2">
               <Calendar className="h-4 w-4" />
               <span className="font-medium">{date}</span>
             </div>
             
-            <h3 className="text-2xl font-bold text-white mb-2 font-inter">{title}</h3>
-            <p className="text-purple-200 font-semibold mb-4 text-lg">{subtitle}</p>
+            <h3 className="text-xl font-bold text-white mb-1.5 font-inter">{title}</h3>
+            <p className="text-purple-200 font-semibold mb-3 text-base">{subtitle}</p>
             
-            <div className="space-y-3">
+            <div className="space-y-2">
               {description.split('\n\n').map((bullet, idx) => (
-                <div key={idx} className="flex items-start gap-3">
-                  <ChevronRight className="h-5 w-5 text-purple-400 mt-0.5 flex-shrink-0" />
-                  <p className="text-gray-300 text-base leading-relaxed">{bullet}</p>
+                <div key={idx} className="flex items-start gap-2">
+                  <ChevronRight className="h-4 w-4 text-purple-400 mt-0.5 flex-shrink-0" />
+                  <p className="text-gray-300 text-sm leading-relaxed">{bullet}</p>
                 </div>
               ))}
             </div>
@@ -122,6 +121,32 @@ const Timeline = () => {
   const timelineRef = useRef<HTMLDivElement>(null);
 
   const workExperience = [
+
+    {
+      title: "Independent AI Researcher",
+      subtitle: "University of Illinois, Chicago",
+      date: "Nov 2025 - Present",
+      description: "Built an AI-powered multimodal knowledge extraction pipeline to process text, images, and tables from unstructured documents (PDF, DOCX, TXT), using SpaCy for rule-based NER and OpenAI LLMs for cross-modal entity and relation extraction.\n\nImplemented an RDF-based knowledge graph layer with RDFlib, encoding extracted entities and relationships as triples for SPARQL querying, semantic search, and cross-document entity resolution with schema-aligned graph-level deduplication.\n\nDesigned a planner–executor multi-stage retrieval pipeline for long-document multi-hop and cross-modal question answering using vector stores for semantic routing.",
+      type: "work" as const,
+    },
+
+    {
+      title: "AI Automation Engineer",
+      subtitle: "21 Spheres",
+      date: "July - Aug 2025",
+      description: "Developed a fully automated insurance workflow integrating TATA AIG and Bimakart portals, dynamically consuming client-side JSON to orchestrate multi-step form filling, policy generation, downloads, and verification using Selenium-based browser automation.\n\nImplemented intelligent OTP and email automation using Microsoft Graph API for secure mailbox access and real-time OTP extraction, enabling complete hands-free execution across authentication checkpoints.\n\nOptimized the pipeline from 10 minutes manual to ~4 minutes automated through multithreading, task scheduling, and LLM-driven multimodal DOM element detection, ensuring robust operation under highly dynamic web layouts.",
+      type: "work" as const,
+    },
+
+
+    {
+      title: "GenAI Intern (Freelance)",
+      subtitle: "Fenmo.ai",
+      date: "Aug - Sept 2025",
+      description: "Built an agentic RAG decision-flow for offer letter synthesis using PDF → chunk → embed pipelines stored in Qdrant, with metadata-scoped vector retrieval and a deterministic Jinja2 fallback path to guarantee output reliability under LLM failure or latency.\n\nDeveloped SQLPilot, a natural language → SQL semantic compiler with schema introspection, query safety validation, and execution across MySQL backends and a sandboxed SQLite playground supporting table creation, mutation, and structured result exports.\n\nDeployed a FastAPI backend with Streamlit UI integration, containerized for reproducibility, and published model artifacts to Hugging Face Hub for remote inference and versioned distribution.",
+      type: "work" as const,
+    },
+    
     {
       title: "Research Intern",
       subtitle: "Indian Institute of Technology (BHU)",
@@ -129,6 +154,7 @@ const Timeline = () => {
       description: "Applied canonical correlation analysis to study links between gender classification and lexical semantics of Hindi nouns.\n\nExplored contextual embeddings using bidirectional deep learning models to enhance gender-aware text representations.\n\nDeveloped low-resource language translation models combining SMT and DL to improve gender prediction accuracy.",
       type: "work" as const,
     },
+
     {
       title: "AI Development Intern",
       subtitle: "21 Spheres",
@@ -136,20 +162,7 @@ const Timeline = () => {
       description: "Built a personalized recommendation system using FAISS/Qdrant for scalable real-time vector search.\n\nDeveloped RESTful APIs to serve AI recommendations and integrated into a modular backend.\n\nConducted EDA and Time Series Forecasting using Pandas & NumPy for seasonal trend analysis.",
       type: "work" as const,
     },
-    {
-      title: "GenAI Intern",
-      subtitle: "Zummit Infolabs",
-      date: "June - July 2024",
-      description: "Built a Python-based LLM Web Scraper with GPT-4o for summarization and semantic content mining.\n\nDeployed a RAG-based web chatbot with CLIP/LLM embeddings and ChromaDB for semantic retrieval and QA.\n\nImplemented advanced natural language processing pipelines for enterprise-level applications.",
-      type: "work" as const,
-    },
-    {
-      title: "Data Science Mentor",
-      subtitle: "NultClasses",
-      date: "May - June 2024",
-      description: "Mentored students in core DS concepts: EDA, ML algorithms, deployment using Pandas, Scikit-learn, and Matplotlib.\n\nReviewed capstone projects, providing feedback on data preprocessing, model selection, and evaluation metrics.\n\nGuided students through industry-standard data science workflows and best practices.",
-      type: "work" as const,
-    },
+    
   ];
 
   const education = [
@@ -187,8 +200,8 @@ const Timeline = () => {
     };
 
     const observer = new IntersectionObserver(observerCallback, {
-      threshold: 0.3,
-      rootMargin: '0px 0px -100px 0px'
+      threshold: 0.2,
+      rootMargin: '0px 0px -50px 0px'
     });
 
     const timelineItems = document.querySelectorAll('[data-timeline-item]');
@@ -200,7 +213,7 @@ const Timeline = () => {
   const currentData = activeTab === "work" ? workExperience : education;
 
   return (
-    <section ref={sectionRef} id="experience" className="min-h-screen bg-black py-12 md:py-20 relative overflow-hidden">
+    <section ref={sectionRef} id="experience" className="min-h-screen bg-black py-12 md:py-16 relative overflow-hidden">
       {/* Background Pattern */}
       <div className="absolute inset-0 opacity-5">
         <div className="absolute inset-0" style={{
@@ -210,7 +223,7 @@ const Timeline = () => {
 
       <div className="container mx-auto px-4 md:px-6 relative z-10">
         {/* Section Header */}
-        <div className="text-center mb-8 md:mb-16">
+        <div className="text-center mb-8 md:mb-12">
           <h2 className="text-2xl md:text-5xl font-bold text-white mb-4 font-inter">
             Experience & Education
           </h2>
@@ -222,7 +235,7 @@ const Timeline = () => {
 
         {/* Tabs */}
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 bg-gray-900/50 border border-gray-700/50 mb-6 md:mb-12">
+          <TabsList className="grid w-full max-w-md mx-auto grid-cols-2 bg-gray-900/50 border border-gray-700/50 mb-6 md:mb-10">
             <TabsTrigger 
               value="work" 
               className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-gray-300 font-medium transition-all duration-300 text-sm md:text-base"
@@ -295,7 +308,7 @@ const Timeline = () => {
         </Tabs>
 
         {/* Scroll Indicator */}
-        <div className="text-center mt-8 md:mt-16">
+        <div className="text-center mt-8 md:mt-12">
           <div className="inline-flex items-center gap-2 text-gray-500 text-sm">
             <div className="w-1 h-4 md:h-8 bg-gradient-to-b from-purple-600 to-transparent animate-pulse"></div>
             <span className="text-xs md:text-sm">Scroll to explore timeline</span>
