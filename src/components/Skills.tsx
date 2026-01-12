@@ -160,17 +160,20 @@ const Skills = () => {
 
     // Globe group
     const globeGroup = new THREE.Group();
+    globeGroup.scale.set(0.7, 0.7, 0.7); // 🔽 smaller initial size
     globeGroupRef.current = globeGroup;
     scene.add(globeGroup);
+
 
     // Wireframe sphere - Less dense
     const sphereGeometry = new THREE.SphereGeometry(2, 20, 20);
     const wireframeMaterial = new THREE.MeshBasicMaterial({
-      color: 0xA78BFA,
+      color: 0x7C3AED,
       wireframe: true,
       transparent: true,
-      opacity: 0.4
+      opacity: 0.75
     });
+
     const wireframeSphere = new THREE.Mesh(sphereGeometry, wireframeMaterial);
     globeGroup.add(wireframeSphere);
 
@@ -191,9 +194,9 @@ const Skills = () => {
       const radius = Math.sqrt(4 - y * y);
       const ringGeometry = new THREE.RingGeometry(radius - 0.01, radius + 0.01, 48);
       const ringMaterial = new THREE.MeshBasicMaterial({
-        color: 0xA78BFA,
+        color: 0xC084FC,
         transparent: true,
-        opacity: 0.4,
+        opacity: 0.75,
         side: THREE.DoubleSide
       });
       const ring = new THREE.Mesh(ringGeometry, ringMaterial);
