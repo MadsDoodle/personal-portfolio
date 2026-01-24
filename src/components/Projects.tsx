@@ -10,11 +10,9 @@ import {
   BarChart3,
   FolderKanban,
   Compass,
-  X,
   Github,
   ExternalLink
 } from "lucide-react";
-
 
 interface ProjectData {
   id: string;
@@ -27,14 +25,17 @@ interface ProjectData {
   liveUrl?: string;
 }
 
-
-
 const Projects = () => {
   const [featuredIndex, setFeaturedIndex] = useState(0);
   const [expandedIndex, setExpandedIndex] = useState<number | null>(null);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const rotationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const [timerProgress, setTimerProgress] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+  const [isUserScrolling, setIsUserScrolling] = useState(false);
+  const userScrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const animationFrameRef = useRef<number | null>(null);
 
   const projects: ProjectData[] = [
     {
@@ -175,59 +176,116 @@ const Projects = () => {
       imageUrl: "images/career-nav.png",
       githubUrl: "https://github.com/MadsDoodle/Career-Navigator"
     },
-
   ];
 
-  const startRotation = () => {
-  if (rotationTimeoutRef.current) {
-    clearTimeout(rotationTimeoutRef.current);
-  }
-  
-  setTimerProgress(0);
-  const startTime = Date.now();
-  const duration = 8000;
-  
-  const updateProgress = () => {
-    const elapsed = Date.now() - startTime;
-    const progress = (elapsed / duration) * 100;
+  // Check if mobile on mount and resize
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
     
-    if (progress < 100) {
-      setTimerProgress(progress);
-      requestAnimationFrame(updateProgress);
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+
+  // Desktop rotation logic
+  const startRotation = () => {
+    if (rotationTimeoutRef.current) {
+      clearTimeout(rotationTimeoutRef.current);
+    }
+    
+    setTimerProgress(0);
+    const startTime = Date.now();
+    const duration = 8000;
+    
+    const updateProgress = () => {
+      const elapsed = Date.now() - startTime;
+      const progress = (elapsed / duration) * 100;
+      
+      if (progress < 100) {
+        setTimerProgress(progress);
+        requestAnimationFrame(updateProgress);
+      }
+    };
+    
+    requestAnimationFrame(updateProgress);
+    
+    rotationTimeoutRef.current = setTimeout(() => {
+      if (expandedIndex === null) {
+        setFeaturedIndex((prev) => (prev + 1) % projects.length);
+        startRotation();
+      }
+    }, duration);
+  };
+
+  // Mobile continuous auto-scroll logic
+  const continuousScroll = () => {
+    if (scrollContainerRef.current && !isUserScrolling) {
+      const container = scrollContainerRef.current;
+      const scrollSpeed = 0.5; // pixels per frame (adjust for faster/slower)
+      
+      container.scrollLeft += scrollSpeed;
+      
+      // Reset to start when reached end
+      if (container.scrollLeft >= container.scrollWidth - container.clientWidth) {
+        container.scrollLeft = 0;
+      }
+      
+      animationFrameRef.current = requestAnimationFrame(continuousScroll);
     }
   };
-  
-  requestAnimationFrame(updateProgress);
-  
-  rotationTimeoutRef.current = setTimeout(() => {
-    if (expandedIndex === null) {
-      setFeaturedIndex((prev) => (prev + 1) % projects.length);
-      startRotation();
-    }
-  }, duration);
-};
 
   useEffect(() => {
-    startRotation();
+    if (isMobile && !isUserScrolling) {
+      animationFrameRef.current = requestAnimationFrame(continuousScroll);
+    } else if (!isMobile) {
+      startRotation();
+    }
+
     return () => {
       if (rotationTimeoutRef.current) {
         clearTimeout(rotationTimeoutRef.current);
       }
+      if (animationFrameRef.current) {
+        cancelAnimationFrame(animationFrameRef.current);
+      }
     };
-  }, [expandedIndex]);
+  }, [isMobile, isUserScrolling]);
 
   const handleCardClick = (index: number) => {
-  if (expandedIndex === index) {
-    setExpandedIndex(null);
-    startRotation();
-  } else {
-    setExpandedIndex(index);
-    setTimerProgress(0); // Add this line
-    if (rotationTimeoutRef.current) {
-      clearTimeout(rotationTimeoutRef.current);
+    if (expandedIndex === index) {
+      setExpandedIndex(null);
+      startRotation();
+    } else {
+      setExpandedIndex(index);
+      setTimerProgress(0);
+      if (rotationTimeoutRef.current) {
+        clearTimeout(rotationTimeoutRef.current);
+      }
     }
-  }
-};
+  };
+
+  const handleTouchStart = () => {
+    setIsUserScrolling(true);
+    if (animationFrameRef.current) {
+      cancelAnimationFrame(animationFrameRef.current);
+    }
+    if (userScrollTimeoutRef.current) {
+      clearTimeout(userScrollTimeoutRef.current);
+    }
+  };
+
+  const handleTouchEnd = () => {
+    if (userScrollTimeoutRef.current) {
+      clearTimeout(userScrollTimeoutRef.current);
+    }
+    
+    userScrollTimeoutRef.current = setTimeout(() => {
+      setIsUserScrolling(false);
+    }, 2000);
+  };
 
   const getGridClass = (index: number) => {
     const currentFeatured = expandedIndex !== null ? expandedIndex : featuredIndex;
@@ -260,124 +318,214 @@ const Projects = () => {
           </p>
         </div>
 
-        {/* Bento Grid */}
-        <motion.div 
-          className="grid grid-cols-4 auto-rows-[240px] gap-4"
-          layout
-        >
-          {projects.map((project, index) => {
-            const currentFeatured = expandedIndex !== null ? expandedIndex : featuredIndex;
-            const isFeatured = index === currentFeatured;
-            const isHovered = hoveredIndex === index;
+        {/* Desktop Bento Grid */}
+        {!isMobile && (
+          <motion.div 
+            className="grid grid-cols-4 auto-rows-[240px] gap-4"
+            layout
+          >
+            {projects.map((project, index) => {
+              const currentFeatured = expandedIndex !== null ? expandedIndex : featuredIndex;
+              const isFeatured = index === currentFeatured;
+              const isHovered = hoveredIndex === index;
 
-            return (
-              <motion.div
+              return (
+                <motion.div
+                  key={project.id}
+                  layout
+                  transition={{
+                    layout: { duration: 1.2, ease: [0.22, 1, 0.36, 1] }
+                  }}
+                  className={getGridClass(index)}
+                  onMouseEnter={() => setHoveredIndex(index)}
+                  onMouseLeave={() => setHoveredIndex(null)}
+                  onClick={() => handleCardClick(index)}
+                >
+                  <div className="relative h-full w-full group cursor-pointer overflow-hidden rounded-2xl">
+                    <AnimatePresence>
+                      {isHovered && (
+                        <motion.div
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.3 }}
+                          className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-pink-500 to-blue-500 rounded-2xl blur-xl opacity-75 z-0"
+                        />
+                      )}
+                    </AnimatePresence>
+
+                    <div className="relative h-full w-full bg-gray-900/90 backdrop-blur-sm border border-purple-500/30 rounded-2xl overflow-hidden z-10">
+                      <div className="absolute inset-0">
+                        <img 
+                          src={project.imageUrl} 
+                          alt={project.title}
+                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
+                      </div>
+
+                      <div className="absolute top-4 right-4 p-3 bg-purple-600/20 backdrop-blur-sm rounded-lg border border-purple-500/30 text-purple-300">
+                        {project.icon}
+                      </div>
+
+                      {isFeatured && expandedIndex === null && (
+                        <div className="absolute top-4 left-4 right-16 h-0.5 bg-gray-800/50 rounded-full overflow-hidden">
+                          <motion.div
+                            className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
+                            style={{ width: `${timerProgress}%` }}
+                            transition={{ duration: 0.1 }}
+                          />
+                        </div>
+                      )}
+
+                      <div className="absolute inset-0 p-6 flex flex-col justify-end">
+                        <h3 className={`font-bold text-white mb-2 font-inter transition-all duration-500 ${
+                          isFeatured ? 'text-2xl' : 'text-lg'
+                        }`}>
+                          {project.title}
+                        </h3>
+                        
+                        <motion.div
+                          animate={{
+                            opacity: isFeatured ? 1 : 0,
+                            height: isFeatured ? "auto" : 0
+                          }}
+                          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                          className="overflow-hidden"
+                        >
+                          <p className="text-gray-300 text-sm leading-relaxed mb-4">
+                            {project.description}
+                          </p>
+                        </motion.div>
+
+                        <div className="flex flex-wrap gap-2 mb-3">
+                          {project.technologies.slice(0, isFeatured ? 6 : 3).map((tech) => (
+                            <span 
+                              key={tech} 
+                              className="bg-purple-600/20 text-purple-300 text-xs px-2 py-1 rounded-full border border-purple-500/30"
+                            >
+                              {tech}
+                            </span>
+                          ))}
+                          {!isFeatured && project.technologies.length > 3 && (
+                            <span className="text-purple-400 text-xs px-2 py-1">
+                              +{project.technologies.length - 3}
+                            </span>
+                          )}
+                        </div>
+
+                        <motion.div
+                          animate={{
+                            opacity: isFeatured ? 1 : 0,
+                            height: isFeatured ? "auto" : 0
+                          }}
+                          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+                          className="flex gap-3 overflow-hidden"
+                        >
+                          {project.githubUrl && (
+                            <a
+                              href={project.githubUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all hover:scale-105 text-sm font-medium"
+                            >
+                              <Github className="h-4 w-4" />
+                              Code
+                            </a>
+                          )}
+                          {project.liveUrl && (
+                            <a
+                              href={project.liveUrl}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              onClick={(e) => e.stopPropagation()}
+                              className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-all hover:scale-105 text-sm font-medium"
+                            >
+                              <ExternalLink className="h-4 w-4" />
+                              Demo
+                            </a>
+                          )}
+                        </motion.div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
+        )}
+
+        {/* Mobile Horizontal Carousel */}
+        {isMobile && (
+          <div 
+            ref={scrollContainerRef}
+            className="flex gap-4 overflow-x-auto pb-8 -mx-6 px-6"
+            style={{ 
+              scrollbarWidth: 'none', 
+              msOverflowStyle: 'none',
+              scrollSnapType: 'none'
+            }}
+            onTouchStart={handleTouchStart}
+            onTouchEnd={handleTouchEnd}
+            onMouseDown={handleTouchStart}
+            onMouseUp={handleTouchEnd}
+            onMouseLeave={handleTouchEnd}
+          >
+            {projects.map((project, index) => (
+              <div
                 key={project.id}
-                layout
-                transition={{
-                  layout: { duration: 1.2, ease: [0.22, 1, 0.36, 1] }
-                }}
-                className={getGridClass(index)}
-                onMouseEnter={() => setHoveredIndex(index)}
-                onMouseLeave={() => setHoveredIndex(null)}
-                onClick={() => handleCardClick(index)}
+                className="flex-shrink-0 w-[85vw]"
               >
-                <div className="relative h-full w-full group cursor-pointer overflow-hidden rounded-2xl">
-                  {/* Hover Gradient Glow */}
-                  <AnimatePresence>
-                    {isHovered && (
-                      <motion.div
-                        initial={{ opacity: 0 }}
-                        animate={{ opacity: 1 }}
-                        exit={{ opacity: 0 }}
-                        transition={{ duration: 0.3 }}
-                        className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-pink-500 to-blue-500 rounded-2xl blur-xl opacity-75 z-0"
-                      />
-                    )}
-                  </AnimatePresence>
-
-                  <div className="relative h-full w-full bg-gray-900/90 backdrop-blur-sm border border-purple-500/30 rounded-2xl overflow-hidden z-10">
-                    {/* Image Background */}
+                <div className="relative h-[500px] w-full group overflow-hidden rounded-2xl">
+                  <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 via-pink-500 to-blue-500 rounded-2xl blur-xl opacity-50" />
+                  
+                  <div className="relative h-full w-full bg-gray-900/90 backdrop-blur-sm border border-purple-500/30 rounded-2xl overflow-hidden">
                     <div className="absolute inset-0">
                       <img 
                         src={project.imageUrl} 
                         alt={project.title}
-                        className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                        className="w-full h-full object-cover"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black via-black/70 to-transparent" />
                     </div>
 
-                    {/* Icon */}
                     <div className="absolute top-4 right-4 p-3 bg-purple-600/20 backdrop-blur-sm rounded-lg border border-purple-500/30 text-purple-300">
                       {project.icon}
                     </div>
 
-                    {/* Timer Progress Bar - only show on featured card during auto-rotation */}
-                    {isFeatured && expandedIndex === null && (
-                      <div className="absolute top-4 left-4 right-16 h-0.5 bg-gray-800/50 rounded-full overflow-hidden">
-                        <motion.div
-                          className="h-full bg-gradient-to-r from-purple-500 to-pink-500"
-                          style={{ width: `${timerProgress}%` }}
-                          transition={{ duration: 0.1 }}
-                        />
-                      </div>
-                    )}
-
-                    {/* Content */}
                     <div className="absolute inset-0 p-6 flex flex-col justify-end">
-                      <h3 className={`font-bold text-white mb-2 font-inter transition-all duration-500 ${
-                        isFeatured ? 'text-2xl' : 'text-lg'
-                      }`}>
+                      <h3 className="text-2xl font-bold text-white mb-3 font-inter">
                         {project.title}
                       </h3>
                       
-                      {/* Description - show only when featured */}
-                      <motion.div
-                        animate={{
-                          opacity: isFeatured ? 1 : 0,
-                          height: isFeatured ? "auto" : 0
-                        }}
-                        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                        className="overflow-hidden"
-                      >
-                        <p className="text-gray-300 text-sm leading-relaxed mb-4">
-                          {project.description}
-                        </p>
-                      </motion.div>
+                      <p className="text-gray-300 text-sm leading-relaxed mb-4">
+                        {project.description}
+                      </p>
 
-                      {/* Tech badges */}
-                      <div className="flex flex-wrap gap-2 mb-3">
-                        {project.technologies.slice(0, isFeatured ? 6 : 3).map((tech) => (
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {project.technologies.slice(0, 4).map((tech) => (
                           <span 
                             key={tech} 
-                            className="bg-purple-600/20 text-purple-300 text-xs px-2 py-1 rounded-full border border-purple-500/30"
+                            className="bg-purple-600/20 text-purple-300 text-xs px-3 py-1.5 rounded-full border border-purple-500/30"
                           >
                             {tech}
                           </span>
                         ))}
-                        {!isFeatured && project.technologies.length > 3 && (
-                          <span className="text-purple-400 text-xs px-2 py-1">
-                            +{project.technologies.length - 3}
+                        {project.technologies.length > 4 && (
+                          <span className="text-purple-400 text-xs px-3 py-1.5">
+                            +{project.technologies.length - 4}
                           </span>
                         )}
                       </div>
 
-                      {/* Action buttons - show only when featured */}
-                      <motion.div
-                        animate={{
-                          opacity: isFeatured ? 1 : 0,
-                          height: isFeatured ? "auto" : 0
-                        }}
-                        transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
-                        className="flex gap-3 overflow-hidden"
-                      >
+                      <div className="flex gap-3">
                         {project.githubUrl && (
                           <a
                             href={project.githubUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                            className="flex items-center gap-2 px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-all hover:scale-105 text-sm font-medium"
+                            className="flex items-center gap-2 px-5 py-2.5 bg-purple-600 text-white rounded-lg transition-all active:scale-95 text-sm font-medium"
                           >
                             <Github className="h-4 w-4" />
                             Code
@@ -388,31 +536,38 @@ const Projects = () => {
                             href={project.liveUrl}
                             target="_blank"
                             rel="noopener noreferrer"
-                            onClick={(e) => e.stopPropagation()}
-                            className="flex items-center gap-2 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-all hover:scale-105 text-sm font-medium"
+                            className="flex items-center gap-2 px-5 py-2.5 bg-gray-700 text-white rounded-lg transition-all active:scale-95 text-sm font-medium"
                           >
                             <ExternalLink className="h-4 w-4" />
                             Demo
                           </a>
                         )}
-                      </motion.div>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </motion.div>
-            );
-          })}
-        </motion.div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Hint Text */}
         <div className="text-center mt-12">
           <p className="text-gray-500 text-sm">
-            {expandedIndex !== null 
-              ? "Click the card again to return to automatic rotation"
-              : "Cards rotate automatically • Hover for glow • Click to expand"}
+            {isMobile 
+              ? "Touch to pause • Scrolls continuously"
+              : expandedIndex !== null 
+                ? "Click the card again to return to automatic rotation"
+                : "Cards rotate automatically • Hover for glow • Click to expand"}
           </p>
         </div>
       </div>
+
+      <style>{`
+        .scrollbar-hide::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
     </section>
   );
 };
