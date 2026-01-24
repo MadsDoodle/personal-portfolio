@@ -178,6 +178,9 @@ const Projects = () => {
     },
   ];
 
+  // Duplicate projects for seamless infinite scroll
+  const duplicatedProjects = [...projects, ...projects];
+
   // Check if mobile on mount and resize
   useEffect(() => {
     const checkMobile = () => {
@@ -224,12 +227,12 @@ const Projects = () => {
   const continuousScroll = () => {
     if (scrollContainerRef.current && !isUserScrolling) {
       const container = scrollContainerRef.current;
-      const scrollSpeed = 0.5; // pixels per frame (adjust for faster/slower)
+      const scrollSpeed = 1.5; // Increased from 0.5 for smoother animation
       
       container.scrollLeft += scrollSpeed;
       
-      // Reset to start when reached end
-      if (container.scrollLeft >= container.scrollWidth - container.clientWidth) {
+      // Reset to start when reached halfway (seamless loop)
+      if (container.scrollLeft >= container.scrollWidth / 2) {
         container.scrollLeft = 0;
       }
       
@@ -464,7 +467,8 @@ const Projects = () => {
             style={{ 
               scrollbarWidth: 'none', 
               msOverflowStyle: 'none',
-              scrollSnapType: 'none'
+              scrollSnapType: 'none',
+              scrollBehavior: 'auto'
             }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
@@ -472,9 +476,9 @@ const Projects = () => {
             onMouseUp={handleTouchEnd}
             onMouseLeave={handleTouchEnd}
           >
-            {projects.map((project, index) => (
+            {duplicatedProjects.map((project, index) => (
               <div
-                key={project.id}
+                key={`${project.id}-${index}`}
                 className="flex-shrink-0 w-[85vw]"
               >
                 <div className="relative h-[500px] w-full group overflow-hidden rounded-2xl">
