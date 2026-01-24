@@ -227,7 +227,7 @@ const Projects = () => {
   const continuousScroll = () => {
     if (scrollContainerRef.current && !isUserScrolling) {
       const container = scrollContainerRef.current;
-      const scrollSpeed = 1.5; // Increased from 0.5 for smoother animation
+      const scrollSpeed = 0.4; // Increased 
       
       container.scrollLeft += scrollSpeed;
       
